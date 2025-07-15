@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detectraa - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Detectraa</h1>
+        <p>Advanced IR Spectrum Drug Detection</p>
+    </header>
+    <div class="container">
+        <h2>Choose a Detection Method</h2>
+        <nav>
+            <div class="button-group">
+                <a href="{{ url_for('pure_compound') }}" class="btn">Pure Compound Detection</a>
+                <a href="{{ url_for('mixture_compound') }}" class="btn btn-secondary">Mixture Compound Simulation</a>
+            </div>
+        </nav>
+    </div>
+</body>
+</html>
