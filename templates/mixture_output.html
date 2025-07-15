@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detectraa - Mixture Simulation Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Detectraa</h1>
+        <p>Mixture Compound Simulation Result</p>
+    </header>
+    <div class="container">
+        <h2>Mixture Simulation Results</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="result-section">
+            <h3>Simulated Mixture:</h3>
+            <div class="result-item">
+                <strong>Drug:</strong> {{ drug | title }} ({{ drug_weight }}%)
+            </div>
+            <div class="result-item">
+                <strong>Cutting Agent:</strong> {{ non_drug.replace('_', ' ') | title }} ({{ non_drug_weight }}%)
+            </div>
+
+            <h3>Identified Characteristics:</h3>
+            <div class="result-item">
+                <strong>Predicted Dominant Drug:</strong> {{ drug | title }}
+            </div>
+            <div class="result-item">
+                <strong>Percentage of Characteristic Peaks Matched:</strong> {{ match_percentage }}%
+            </div>
+
+            <h3>Characteristic Peaks Found in Mixture:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Target (cm⁻¹)</th>
+                        <th>Detected (cm⁻¹)</th>
+                        <th>Intensity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if found_peaks %}
+                        {% for target, detected, intensity in found_peaks %}
+                            <tr>
+                                <td>{{ target|round(0) }}</td>
+                                <td>{{ detected|round(0) }}</td>
+                                <td>{{ "%.3f"|format(intensity) }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No characteristic peaks detected for the chosen drug in the mixture.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="graph-container">
+            <h3>Mixture Spectrum Graph:</h3>
+            <img src="data:image/png;base64,{{ mixture_graph_url }}" alt="Mixture Spectrum Graph">
+        </div>
+
+        <div class="graph-container">
+            <h3>Pure Drug Spectrum Graph with Key Peaks (for {{ drug | title }}):</h3>
+            <img src="data:image/png;base64,{{ pure_drug_graph_url }}" alt="Pure Drug Spectrum Graph">
+        </div>
+
+        <div class="download-section">
+            <a href="{{ url_for('download_report', filename=report_filename) }}" class="btn btn-secondary">Download PDF Report</a>
+        </div>
+        <br>
+        <a href="{{ url_for('home') }}" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

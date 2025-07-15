@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detectraa - Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Detectraa</h1>
+        <p>Pure Compound Analysis Result</p>
+    </header>
+    <div class="container">
+        <h2>Analysis Results</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="result-section">
+            <h3>Prediction Summary:</h3>
+            <div class="result-item">
+                <strong>Is Drug Detected:</strong> {{ 'Yes' if prediction.is_drug else 'No' }}
+            </div>
+            <div class="result-item">
+                <strong>Drug Probability:</strong> {{ "%.1f"|format(prediction.probability * 100) }}%
+            </div>
+
+            {% if prediction.is_drug %}
+                <div class="result-item">
+                    <strong>Predicted Drug Type:</strong> {{ prediction.drug_type | title }}
+                </div>
+                <div class="result-item">
+                    <strong>Confidence:</strong> {{ "%.1f"|format(prediction.confidence * 100) }}%
+                </div>
+                <div class="result-item">
+                    <strong>Matched Peaks:</strong> {{ prediction.matched_peaks }}
+                </div>
+
+                <h3>Drug Information:</h3>
+                {% for key, value in prediction.drug_info.items() %}
+                    <div class="result-item">
+                        <strong>{{ key.replace('_', ' ').title() }}:</strong> {{ value }}
+                    </div>
+                {% endfor %}
+
+                <h3>Peak Matching Analysis (Tolerance: +/- 20nm):</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Expected Peak (cm^-1)</th>
+                            <th>Closest Detected Peak (cm^-1)</th>
+                            <th>Match</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in peak_matching_data %}
+                        <tr>
+                            <td>{{ item.expected_peak | round(0) }}</td>
+                            <td>
+                                {% if item.detected_peak is not none %}
+                                    {{ item.detected_peak | round(0) }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.is_match %}
+                                    ✅ Yes
+                                {% else %}
+                                    ❌ No
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+                <div class="result-item">
+                    <strong>Reason:</strong> {{ prediction.reason if prediction.reason else 'N/A' }}
+                </div>
+                <h3>Top Detected Peaks (No Drug Identified):</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Wavenumber (cm^-1)</th>
+                            <th>Absorbance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {# Iterate directly over the pre-processed peak_matching_data for non-drug case #}
+                        {% for item in peak_matching_data %}
+                        <tr>
+                            <td>{{ item.wavenumber|round(1) }}</td>
+                            <td>{{ "%.3f"|format(item.absorbance) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+
+        <div class="graph-container">
+            <h3>Spectrum Graph:</h3>
+            <img src="data:image/png;base64,{{ graph_url }}" alt="Spectrum Graph">
+        </div>
+
+        <div class="download-section">
+            <a href="{{ url_for('download_report', filename=report_filename) }}" class="btn btn-secondary">Download PDF Report</a>
+        </div>
+        <br>
+        <a href="{{ url_for('home') }}" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

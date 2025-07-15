@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detectraa - Pure Compound Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Detectraa</h1>
+        <p>Pure Compound Detection</p>
+    </header>
+    <div class="container">
+        <h2>Upload IR Spectrum for Analysis</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('pure_compound') }}" onsubmit="showLoading()">
+            <div class="form-group">
+                <label for="file">Select a .csv IR Spectrum File:</label>
+                <input type="file" id="file" name="file" accept=".csv" required>
+            </div>
+            <div class="submit-button-container">
+                <input type="submit" value="Analyze Spectrum">
+                <div class="loading-spinner"></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function showLoading() {
+            const submitContainer = document.querySelector('.submit-button-container');
+            submitContainer.classList.add('loading');
+        }
+    </script>
+</body>
+</html>

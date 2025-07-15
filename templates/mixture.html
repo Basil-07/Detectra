@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detectraa - Mixture Compound Simulation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Detectraa</h1>
+        <p>Mixture Compound Simulation</p>
+    </header>
+    <div class="container">
+        <h2>Simulate Drug Mixture</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('mixture_compound') }}" onsubmit="showLoading()">
+            <div class="form-group">
+                <label for="drug">Select Drug:</label>
+                <select id="drug" name="drug" required>
+                    {% for d in drugs %}
+                        <option value="{{ d }}">{{ d | title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="drug_weight">Drug Percentage (1-100%):</label>
+                <input type="number" id="drug_weight" name="drug_weight" min="1" max="100" value="50" required>
+            </div>
+
+            <div class="form-group">
+                <label for="non_drug">Select Cutting Agent:</label>
+                <select id="non_drug" name="non_drug" required>
+                    {% for nd in non_drugs %}
+                        <option value="{{ nd }}">{{ nd.replace('_', ' ') | title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="non_drug_weight">Cutting Agent Percentage (0-Max %):</label>
+                <input type="number" id="non_drug_weight" name="non_drug_weight" min="0" value="50" required>
+                <small id="non_drug_weight_info" style="color: #666;">Max: 50% (initial)</small>
+            </div>
+            <div class="submit-button-container">
+                <input type="submit" value="Simulate Mixture">
+                <div class="loading-spinner"></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const drugWeightInput = document.getElementById('drug_weight');
+            const nonDrugWeightInput = document.getElementById('non_drug_weight');
+            const nonDrugWeightInfo = document.getElementById('non_drug_weight_info');
+
+            function updateMaxNonDrugWeight() {
+                const drugWeight = parseFloat(drugWeightInput.value);
+                const maxNonDrugWeight = 100 - drugWeight;
+                nonDrugWeightInput.max = maxNonDrugWeight;
+                nonDrugWeightInfo.textContent = `Max: ${maxNonDrugWeight}%`;
+
+                // Adjust non_drug_weight if it exceeds the new max
+                if (parseFloat(nonDrugWeightInput.value) > maxNonDrugWeight) {
+                    nonDrugWeightInput.value = maxNonDrugWeight;
+                }
+            }
+
+            drugWeightInput.addEventListener('input', updateMaxNonDrugWeight);
+
+            // Initial update on page load
+            updateMaxNonDrugWeight();
+        });
+
+        function showLoading() {
+            const submitContainer = document.querySelector('.submit-button-container');
+            submitContainer.classList.add('loading');
+        }
+    </script>
+</body>
+</html>
