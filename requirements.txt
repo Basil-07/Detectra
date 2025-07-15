@@ -1,0 +1,8 @@
+flask
+pandas
+matplotlib
+scikit-learn
+xgboost
+imbalanced-learn
+fpdf2
+joblib

@@ -1,0 +1,83 @@
+Software Requirements Specification (SRS) – Module: Analytics (Performance & Efficiency)
+
+3.1 External Interface Requirements
+3.1.1 User Interfaces
+Real-Time Performance Dashboard: Interactive dashboards for production, inventory, sales, and resource utilization with drill-down capabilities.
+
+Efficiency Benchmarking Tool: Comparative analysis of labor/machine efficiency vs. historical/industry standards.
+
+Alert Configuration Panel: UI to set thresholds for automated alerts (e.g., cost variances >5%, low inventory).
+
+Mobile Analytics View: Simplified dashboards for field supervisors (offline-capable).
+
+3.1.2 Hardware Interfaces
+Factory IoT Sensors: Real-time data ingestion for machine downtime and production rates.
+
+Barcode Scanners: Track inventory movements for efficiency calculations.
+
+3.1.3 Software Interfaces
+ERP Modules: Integrate with Finance, HRMS, Inventory, and Factories for cross-module analytics.
+
+Legacy Systems: API-based sync with Tally (ERP 9) and MySQL payroll databases.
+
+Government Portals: Auto-generate Rubber Board, GST, and ISO 9001 compliance reports.
+
+3.1.4 Communications Interfaces
+HTTPS/REST APIs: Secure data exchange with upstream modules (e.g., Finance, HRMS).
+
+WebSockets: Push real-time alerts to dashboards.
+
+SMS/Email APIs: Deliver alerts via SMS (TRAI-DLT compliant) and corporate SMTP.
+
+3.2 Functional Requirements
+3.2.1 Mode 1: Real-Time Performance Monitoring
+3.2.1.1 The system shall display real-time KPIs (production, inventory, sales) updated at ≤15-second intervals.
+
+3.2.1.2 Classify KPIs by criticality (green/amber/red) using admin-configured thresholds.
+
+3.2.1.3 Support drill-down from aggregates to granular data (e.g., estate → tapper-wise latex production).
+
+3.2.1.4 Trigger automated alerts (email/SMS/push) for deviations (e.g., production drops >10%).
+
+3.2.2 Mode 2: Historical Efficiency Analytics
+3.2.2.1 Generate reports comparing actual vs. budgeted costs, flagging variances >5%.
+
+3.2.2.2 Calculate labor efficiency (%) per estate/factory using attendance and output data.
+
+3.2.2.3 Benchmark performance against historical data and Rubber Board standards.
+
+3.2.3 Mode 3: Predictive Insights
+3.2.3.1 Forecast rubber demand using ARIMA/ML models with confidence intervals.
+
+3.2.3.2 Recommend optimal resource allocation via what-if scenario modeling.
+
+3.2.4 Mode 4: Compliance Reporting
+3.2.4.1 Auto-generate GST, Rubber Board, and ISO 9001:2015 reports with digital signatures.
+
+3.3 Performance Requirements
+P-1: Dashboards shall render ≤3 seconds with 10,000+ data points.
+
+P-2: Predictive models shall execute within ≤30 seconds for 12-month forecasts.
+
+P-3: Support 200+ concurrent users with ≤1.5-second response times.
+
+3.4 Design Constraints
+Database: PostgreSQL (open-source preference per EOI).
+
+Integration: OAuth 2.0 for APIs; comply with Tally and MySQL payroll interfaces.
+
+UI: Material 3 design system; WCAG 2.1 AA compliant.
+
+3.5 Software System Attributes
+Reliability: 99.9% uptime; automated retries for failed alerts.
+
+Security: Role-based access (RBAC); AES-256 encryption for sensitive data.
+
+Scalability: Horizontal scaling for report generation; sharded data stores.
+
+3.6 Other Requirements
+Training: Admin training on debugging, backup, and predictive model tuning.
+
+Compliance: Adhere to GDPR/India DPDP Act for user data in reports.
+
+Disaster Recovery: RTO ≤2 hours, RPO ≤1 hour via geo-replicated backups.
